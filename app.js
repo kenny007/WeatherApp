@@ -1,8 +1,29 @@
 const request = require('request');
+const yargs = require('yargs');
+
+const argv = yargs.options({
+    a:{
+        demand:true,
+        alias:'address',
+        address:'Address to fetch weather for',
+        string: true
+    }
+})
+.help()
+.alias('help','h')
+.argv;
+
+var encodedAddress = encodeURIComponent(argv.address);
 
 request({
-    url:'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyD7DsngSv3MQvUv_4EOAWGql-Zyu0LGT08&address=%2013%20lombard%20street%20philadephia',
+    url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=AIzaSyB223d-3Fd8_5v0N_v85tB5W3b91C1oI9E`,
     json: true
 }, (error, response, body) => {
-  console.log(JSON.stringify(body, undefined, 2));
+  console.log(`Address:${body.results[0].geometry.location.lat}`);
+  console.log(`Address:${body.results[0].geometry.location.lng}`);
 })
+
+// var options = {
+//     url: 'https://maps.googleapis.com/maps/api/geocode/json?' + 'address=%201,3%20lombard%20street%20philadephia' +
+//     '&key=' + process.env.WEATHER_APP_KEY, json: true
+//   };
