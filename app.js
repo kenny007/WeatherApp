@@ -1,5 +1,5 @@
-const request = require('request');
 const yargs = require('yargs');
+const geocode = require('./geocode/geocode');
 
 const argv = yargs.options({
     a:{
@@ -15,21 +15,13 @@ const argv = yargs.options({
 
 var encodedAddress = encodeURIComponent(argv.address);
 
-request({
-    url: `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=AIzaSyB223d-3Fd8_5v0N_v85tB5W3b91C1oI9E`,
-    json: true
-}, (error, response, body) => {
-    if(error){
-        console.log('Unable to connect to Google servers.');
-    } else if(body.status === 'ZERO_RESULTS'){
-        console.log('Unable to find that address');
-    } else if(body.status === 'OK'){
-       console.log(`Address: ${body.results[0].formatted_address}`);
-       console.log(`Address: ${body.results[0].geometry.location.lat}`);
-       console.log(`Address: ${body.results[0].geometry.location.lng}`);
-    }
- 
-})
+geocode.geocodeAddress(encodedAddress, (errorMessage, results) => {
+ if(errorMessage){
+     console.log(errorMessage)
+ } else{
+    console.log(JSON.stringify(results, undefined, 2));
+ }
+});
 
 // var options = {
 //     url: 'https://maps.googleapis.com/maps/api/geocode/json?' + 'address=%201,3%20lombard%20street%20philadephia' +
